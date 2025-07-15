@@ -261,7 +261,7 @@ function initGame(channel) {
     console.log(`🕹️ Game being initialized in channel ${channel}`)
 
     // Set card pile amount
-    channels.get(channel).set("cardpile", 0)
+    channels.get(channel).set("cardpile", 15)
 
     // Choose goal number
     if (Math.random() <= 0.5) {
