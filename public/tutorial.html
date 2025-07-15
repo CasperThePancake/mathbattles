@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">  
+    <link rel="stylesheet" href="styleTutorial.css">
+</head>
+<body>
+    <div id="tutorialMain">
+        <h1 id="titleName">⚔️ Math Battles 🧮</h1>
+        <h2 class="tutorialTitle">Welcome to math battles!</h2>
+        <p>Welcome to math battles! In this game, you and one opponent go head-to-head, fighting with numbers.<br><br>Each player has three numbers to play with, which are randomly chosen at the start of a battle. Also randomly chosen is the goal number. This number is visible to each player and is very important: to win, one of your 3 numbers must be the closest to that goal!</p>
+        <h2 class="tutorialTitle">Using battle cards</h2>
+        <p>At the start of the game, each player is also given 5 random battle cards to use. Each card performs some mathematical operation, like sum or multiplication, to a selected number. You can use cards on your own numbers, your opponent's numbers or even on the goal!<br><br>Some cards require an input. For example, you might use the "minus" card on an opponent's number to subtract some value from their number. That value is an input and it must always be one of your own numbers. So if you have the number 4 and your opponent has the number 7, you can use the "minus" card on their card with your card as an input, which will change their number into 7-4 = 3. <strong>For obvious reasons, cards that take an input cannot be used on the goal number!</strong><br><br>Each game has a card pile, which is a reserve pool of cards that is used to draw a new card for you once you've used one for a move. If the card pile runs out and is empty, you will not receive new cards.</p>
+        <h2 class="tutorialTitle">Peeking at opponent numbers</h2>
+        <p>During a battle, it might be helpful to know what numbers your opponent currently has. This allows you to mess them up by making smart use of your cards. Normally their numbers are hidden to you, but you can use up a turn to peek at one of their numbers!<br><br>Additionally, there is a small chance for a card to come as a "pre-peek" version. This means that playing that card also gives you a free number peek before the actual card move; all in one turn!</p>
+        <h2 class="tutorialTitle">Skipping your turn</h2>
+        <p>Sometimes you're just in a good position and you don't want to do anything during a turn. You can do that by simply skipping the turn. The only downside is that this action cannot be performed twice in a row.</p>
+        <h2 class="tutorialTitle">End of the game</h2>
+        <p>The game ends if one of the players runs out of cards, which can happen after the card pile runs out. At this point, the player with the closest number to the goal number is the winner. If there is a tie, meaning both players share a closest number, there will be a tie-breaker. Here the player whose three numbers add up to the largest absolute sum, will win. For example, the numbers (13,-2,4) win over (-5,-3,2) since 13+2+4 = 19 > 5+3+2 = 10.</p>
+        <button onclick="window.location.href = `index.html`">Return</button>
+    </div>
+</body>
+</html>

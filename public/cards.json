@@ -1,0 +1,61 @@
+{
+    "basic":[
+        "<img src=\"cards/basic/plus_one.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/minus_one.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/double.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/halve.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/times_five.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/times_ten.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/times_hundred.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/divide_five.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/divide_ten.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/basic/divide_hundred.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"
+    ],
+    "common":[
+        "<img src=\"cards/common/plus.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/common/minus.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/common/times.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/common/divide.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/common/negate.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/common/square.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/common/cube.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/common/sqrt.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"
+    ],
+    "uncommon":[
+        "<img src=\"cards/uncommon/power.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/absolute.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/root.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/append.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/prepend.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/digit_sum.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/digit_product.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/randomize.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/digit_count.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/sort_ascend.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/uncommon/sort_descend.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"
+    ],
+    "rare":[
+        "<img src=\"cards/rare/reverse.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/drop_last.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/drop_first.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/prime_jump.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/square_jump.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/mod.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/multiple_jump.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/palindrome.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/gcd.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/rare/lcm.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"
+    ],
+    "epic":[
+        "<img src=\"cards/epic/factorial.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/epic/fibonacci_jump.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/epic/copy.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/epic/double_factorial.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/epic/divisor_sum.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"
+    ],
+    "legendary":[
+        "<img src=\"cards/legendary/halve_distance.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/legendary/percentage.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">",
+        "<img src=\"cards/legendary/orbit.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"
+    ]
+}

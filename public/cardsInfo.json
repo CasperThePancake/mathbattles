@@ -1,0 +1,61 @@
+{
+    "basic":[
+        "<h2>Plus one</h2><p>Adds one to the selected number</p>",
+        "<h2>Minus one</h2><p>Subtracts one from the selected number</p>",
+        "<h2>Double</h2><p>Doubles the selected number</p>",
+        "<h2>Halve</h2><p>Halves the selected number</p>",
+        "<h2>Times five</h2><p>Multiplies the selected number by five</p>",
+        "<h2>Times ten</h2><p>Multiplies the selected number by ten</p>",
+        "<h2>Times one hundred</h2><p>Multiplies the selected number by one hundred</p>",
+        "<h2>Divided by five</h2><p>Divides the selected number by five</p>",
+        "<h2>Divided by ten</h2><p>Divides the selected number by ten</p>",
+        "<h2>Divided by one hundred</h2><p>Divides the selected number by one hundred</p>"
+    ],
+    "common":[
+        "<h2>Plus</h2><p>Adds a given input to the selected number</p>",
+        "<h2>Minus</h2><p>Subtracts a given input from the selected number</p>",
+        "<h2>Times</h2><p>Multiplies the selected number by a given input</p>",
+        "<h2>Divided by</h2><p>Divides the selected number by a given input</p>",
+        "<h2>Negate</h2><p>Flips the sign of the selected number</p>",
+        "<h2>Square</h2><p>Squares the selected number</p>",
+        "<h2>Cube</h2><p>Cubes the selected number</p>",
+        "<h2>Square root</h2><p>Takes the square root of the selected number</p>"
+    ],
+    "uncommon":[
+        "<h2>Power</h2><p>Raises the selected number to a given input power</p>",
+        "<h2>Absolute value</h2><p>Takes the absolute value of the selected number</p>",
+        "<h2>Root</h2><p>Takes the n-root of a selected number where n is a given input</p>",
+        "<h2>Append</h2><p>Sticks a given input to the end of a selected number string-wise</p>",
+        "<h2>Prepend</h2><p>Sticks a given input to the front of a selected number string-wise</p>",
+        "<h2>Digit sum</h2><p>Takes the sum of all digits of the selected number</p>",
+        "<h2>Digit product</h2><p>Takes the product of all digits of the selected number</p>",
+        "<h2>Randomize</h2><p>Randomizes the selected number into a new one</p>",
+        "<h2>Digit count</h2><p>Takes the digit length of the selected number string-wise</p>",
+        "<h2>Sort ascending</h2><p>Sorts the selected number in ascending order of digits</p>",
+        "<h2>Sort descending</h2><p>Sorts the selected number in descending order of digits</p>"
+    ],
+    "rare":[
+        "<h2>Reverse</h2><p>Reverses the digits of the selected number</p>",
+        "<h2>Drop last digit</h2><p>Removes the last digit from the selected number</p>",
+        "<h2>Drop first digit</h2><p>Removes the first digit from the selected number</p>",
+        "<h2>Prime jump</h2><p>Jumps to the prime number that is nearest to the selected number</p>",
+        "<h2>Square jump</h2><p>Jumps to the perfect square that is nearest to the selected number</p>",
+        "<h2>Modulo</h2><p>Calculates the modulo of the selected number with respect to a given input</p>",
+        "<h2>Multiple jump</h2><p>Jumps to the multiple of a given input that is nearest to the selected number</p>",
+        "<h2>Palindrome</h2><p>Forms a palindrome by sticking the reverse of the selected number to its end</p>",
+        "<h2>Greatest common divisor</h2><p>Finds the greatest common divisor of the selected number and a given input</p>",
+        "<h2>Least common multiple</h2><p>Finds the least common multiple of the selected number and a given input</p>"
+    ],
+    "epic":[
+        "<h2>Factorial</h2><p>Takes the factorial of the selected number</p>",
+        "<h2>Fibonacci jump</h2><p>Jumps to the Fibonacci number that is nearest to the selected number</p>",
+        "<h2>Copy</h2><p>Copies a given input to the selected number's slot</p>",
+        "<h2>Double factorial</h2><p>Takes the double factorial of the selected number</p>",
+        "<h2>Divisor sum</h2><p>Takes the sum of all the divisors of the selected number</p>"
+    ],
+    "legendary":[
+        "<h2>Halve distance</h2><p>Halves the distance between the selected number and the goal number</p>",
+        "<h2>Percentage</h2><p>Takes the percentage of the selected number over the goal number</p>",
+        "<h2>Orbit</h2><p>Orbits the selected number around the goal number</p>"
+    ]
+}

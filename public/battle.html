@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active duel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="overlay">
+        <h1 id="overlayText">Waiting for opponent to join...</h1>
+        <button onclick="copyInviteLink()" id="copyButton">Copy invite link 📋</button>
+    </div>
+    <div id="mainBattle">
+        <div id="opponentMain">
+            <div id="opponentNumbers">
+                <div id="opponentNumber1" class="opponentNumber" onclick="clickOppNum(1)">???</div>
+                <div id="opponentNumber2" class="opponentNumber" onclick="clickOppNum(2)">???</div>
+                <div id="opponentNumber3" class="opponentNumber" onclick="clickOppNum(3)">???</div>
+            </div>
+            <div id="opponentCards">
+                <div id="opponentCard1" class="opponentCard"><img src="cards/back.png" alt="card" style="width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;"></div>
+                <div id="opponentCard2" class="opponentCard"><img src="cards/back.png" alt="card" style="width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;"></div>
+                <div id="opponentCard3" class="opponentCard"><img src="cards/back.png" alt="card" style="width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;"></div>
+                <div id="opponentCard4" class="opponentCard"><img src="cards/back.png" alt="card" style="width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;"></div>
+                <div id="opponentCard5" class="opponentCard"><img src="cards/back.png" alt="card" style="width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;"></div>
+            </div>
+        </div>
+        <div id="middleMain">
+            <div id="cardPile">
+                <p id="cardPileText"></p>
+            </div>
+            <div id="actionArea">
+                <!-- Filler goes here -->
+                <div id="actionAreaContent">
+                    <h3 id="actionText"></h3>
+                    <div id="actionButtons"></div>
+                </div>
+            </div>
+            <div id="goal" onclick="clickGoal()">
+                <p id="goalText"></p>
+            </div>
+        </div>
+        <div id="playerMain">
+            <div id="playerCards">
+                <div id="playerCard1" class="playerCard" onclick="clickPlayerCard(1)"></div>
+                <div id="playerCard2" class="playerCard" onclick="clickPlayerCard(2)"></div>
+                <div id="playerCard3" class="playerCard" onclick="clickPlayerCard(3)"></div>
+                <div id="playerCard4" class="playerCard" onclick="clickPlayerCard(4)"></div>
+                <div id="playerCard5" class="playerCard" onclick="clickPlayerCard(5)"></div>
+            </div>
+            <div id="playerNumbers">
+                <div id="playerNumber1" class="playerNumber" onclick="clickPlayerNum(1)"></div>
+                <div id="playerNumber2" class="playerNumber" onclick="clickPlayerNum(2)"></div>
+                <div id="playerNumber3" class="playerNumber" onclick="clickPlayerNum(3)"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Vars init //
+        let socket = null;
+        let myCards;
+        let myNumbers;
+        let goal;
+        let cardpile;
+        let gameState;
+        let canSkipHold;
+        let holdingCard;
+        let applyingNum;
+        let clickDelayPrepeek = false;
+
+        // Get URL params //
+
+        // Get the query string
+        const queryString = window.location.search;
+
+        // Parse the query string
+        const urlParams = new URLSearchParams(queryString);
+
+        // Get battle ID
+        battleID = urlParams.get("id")
+
+        // General functions //
+
+        // Copying invite link
+        function copyInviteLink() {
+            navigator.clipboard.writeText("https://mathgame.com/battle?id="+battleID); // Placeholder URL!
+            button = document.getElementById("copyButton")
+            button.innerHTML = "Copied invite link!"
+        }
+
+        // Overlay countdown
+        function beginCountdown(length) {
+            countText = document.getElementById("overlayText")
+            copyButton = document.getElementById("copyButton")
+            copyButton.remove()
+            countText.textContent = `Battle begins in ${length}`
+            const interval = setInterval(() => {
+                length--;
+                if (length <= 0) {
+                    clearInterval(interval);
+                    startBattle();
+                } else {
+                    countText.textContent = `Battle begins in ${length}`;
+                }
+            }, 1000);
+        }
+
+        // Game start
+        function startBattle() {
+            overlay = document.getElementById("overlay")
+            overlay.remove()
+            
+            // Code to init display all things on screen
+            displayCards(myCards)
+            displayNumbers(myNumbers,goal)
+            displayGoal(goal)
+            displayCardpile(cardpile)
+        }
+
+        // Cardpile displaying
+        function displayCardpile(amount) {
+            const pileText = document.getElementById("cardPileText")
+            pileText.textContent = `${amount}`
+
+            const pile = document.getElementById("cardPile")
+            if (15 <= amount && amount <= 25) {
+                pile.style.backgroundImage = "url('cardpile_3.png')"
+            } else if (5 <= amount && amount < 15) {
+                pile.style.backgroundImage = "url('cardpile_2.png')"
+            } else if (1 < amount && amount < 5) {
+                pile.style.backgroundImage = "url('cardpile_1.png')"
+            } else if (amount == 1) {
+                pile.style.backgroundImage = "url('cardpile_0.png')"
+            } else {
+                pileText.textContent = ''
+                pile.style.backgroundImage = 'none'
+            }
+        }
+
+        // Goal displaying
+        function displayGoal(goal) {
+            const goalText = document.getElementById("goalText")
+            goalText.textContent = `${goal}`
+        }
+
+        // Player number displaying
+        function displayNumbers(numbers,goal) {
+            const number1Text = document.getElementById("playerNumber1")
+            const number2Text = document.getElementById("playerNumber2")
+            const number3Text = document.getElementById("playerNumber3")
+            number1Text.textContent = `${numbers[0]}`
+            number2Text.textContent = `${numbers[1]}`
+            number3Text.textContent = `${numbers[2]}`
+
+            div = document.getElementById('playerNumber1')
+            if (numbers[0] == goal) {
+                div.style.backgroundImage = "url('paper_gold.png')"
+            } else {
+                div.style.backgroundImage = "url('paper.png')"
+            }
+
+            div = document.getElementById('playerNumber2')
+            if (numbers[1] == goal) {
+                div.style.backgroundImage = "url('paper_gold.png')"
+            } else {
+                div.style.backgroundImage = "url('paper.png')"
+            }
+
+            div = document.getElementById('playerNumber3')
+            if (numbers[2] == goal) {
+                div.style.backgroundImage = "url('paper_gold.png')"
+            } else {
+                div.style.backgroundImage = "url('paper.png')"
+            }
+        }
+
+        // Player cards displaying
+        async function displayCards(cards) {
+            const card1Div = document.getElementById("playerCard1")
+            const card2Div = document.getElementById("playerCard2")
+            const card3Div = document.getElementById("playerCard3")
+            const card4Div = document.getElementById("playerCard4")
+            const card5Div = document.getElementById("playerCard5")
+            if (cards[0] == null) {card1Div.innerHTML = ''} else {
+                card1Div.innerHTML = (await (await fetch('cards.json')).json())[cards[0].rarity][cards[0].id - 1]
+                if (cards[0].prepeek) {card1Div.innerHTML += "<img src=\"cards/prepeek.png\" class=\"overlayImg\" style=\"image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"}
+            }
+            if (cards[1] == null) {card2Div.innerHTML = ''} else {
+                card2Div.innerHTML = (await (await fetch('cards.json')).json())[cards[1].rarity][cards[1].id - 1]
+                if (cards[1].prepeek) {card2Div.innerHTML += "<img src=\"cards/prepeek.png\" class=\"overlayImg\" style=\"image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"}
+            }
+            if (cards[2] == null) {card3Div.innerHTML = ''} else {
+                card3Div.innerHTML = (await (await fetch('cards.json')).json())[cards[2].rarity][cards[2].id - 1]
+                if (cards[2].prepeek) {card3Div.innerHTML += "<img src=\"cards/prepeek.png\" class=\"overlayImg\" style=\"image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"}
+            }  
+            if (cards[3] == null) {card4Div.innerHTML = ''} else {
+                card4Div.innerHTML = (await (await fetch('cards.json')).json())[cards[3].rarity][cards[3].id - 1]
+                if (cards[3].prepeek) {card4Div.innerHTML += "<img src=\"cards/prepeek.png\" class=\"overlayImg\" style=\"image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"}
+            }
+            if (cards[4] == null) {card5Div.innerHTML = ''} else {
+                card5Div.innerHTML = (await (await fetch('cards.json')).json())[cards[4].rarity][cards[4].id - 1]
+                if (cards[4].prepeek) {card5Div.innerHTML += "<img src=\"cards/prepeek.png\" class=\"overlayImg\" style=\"image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"}
+            }
+        }
+
+        // Opponent's turn
+        function oppTurn() {
+            gameState = "oppTurn"
+            actionText = document.getElementById("actionText")
+            actionText.textContent = "It's your opponent's turn! Wait for them to choose an action..."
+            hideAllPeeks() // Hide all peeked cards if necessary from your previous turn
+
+            // Let new cards fly in if necessary
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`playerCard${i}`).style.visibility = "visible"
+                document.getElementById(`playerCard${i}`).style.transform = ""
+            }
+
+            // Remove displayed cards
+            document.getElementById("playedCard").remove()
+        }
+
+        // My turn to choose
+        function beginTurn(canSkip) {
+            canSkipHold = canSkip
+            gameState = "myTurn-choose"
+            actionText = document.getElementById("actionText")
+            actionText.textContent = "It's your turn! Choose an action:"
+
+            actionButtons = document.getElementById("actionButtons")
+            actionButtons.innerHTML = ''
+
+            button1 = document.createElement("button")
+            button1.textContent = "Play card"
+            button1.className = "actionButton"
+            button1.onclick = () => turnPlayCard()
+            actionButtons.appendChild(button1)
+
+            button2 = document.createElement("button")
+            button2.textContent = "Peek number"
+            button2.className = "actionButton"
+            button2.onclick = () => turnPeekNumber()
+            actionButtons.appendChild(button2)
+            
+            if (canSkip) {
+                button3 = document.createElement("button")
+                button3.textContent = "Skip turn"
+                button3.className = "actionButton"
+                button3.onclick = () => turnSkip()
+                actionButtons.appendChild(button3)
+            }
+
+            // Remove displayed cards
+            document.getElementById("playedCard").remove()
+        }
+
+        // Hide all peeked cards
+        function hideAllPeeks() {
+            const oppNum1 = document.getElementById("opponentNumber1")
+            oppNum1.textContent = '???'
+            const oppNum2 = document.getElementById("opponentNumber2")
+            oppNum2.textContent = '???'
+            const oppNum3 = document.getElementById("opponentNumber3")
+            oppNum3.textContent = '???'
+        }
+
+        // Reveal a peeked card
+        function displayPeekedNumber(num,value) {
+            const oppNum = document.getElementById(`opponentNumber${num}`)
+            oppNum.textContent = value
+        }
+
+        // Cancel choosing (if applicable! client vars can be manipulated, but pointless as server won't accept invalid actions!)
+        function cancelChoosing() {
+            if (gameState == "myTurn-peeking" || gameState == "myTurn-choosecard" || gameState == "myTurn-chooseprepeek" || gameState == "myTurn-choosemainnum" || gameState == "myTurn-chooseinput") {
+                beginTurn(canSkipHold)
+
+                // Hide holding cards
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`playerCard${i}`).style.transform = ""
+                }
+
+                // Hide holding card filler
+                if (gameState != "myTurn-peeking") {
+                    document.getElementById("actionTextFiller").remove()
+                }
+            } else if (gameState == "myTurn-postprepeekinput") {
+                gameState = "myTurn-postprepeek"
+                actionText = document.getElementById("actionText")
+                if (myCards[holdingCard - 1].input) {
+                    actionText.textContent = "Click on a number to use the card on it!"
+                } else {
+                    actionText.textContent = "Click on a number or the goal to use the card on it!"
+                }
+
+                // Hide buttons
+                actionButtons = document.getElementById("actionButtons")
+                actionButtons.innerHTML = ''
+            }
+        }
+
+        function holdCardSent() {
+            // Hide holding card filler
+            document.getElementById("actionTextFiller").remove()
+
+            // Move away used card
+            document.getElementById(`playerCard${holdingCard}`).style.visibility = "hidden";
+            document.getElementById(`playerCard${holdingCard}`).style.transform = "translateY(50cqw)";
+        }
+
+        function clickOppNum(num) {
+            if (gameState == "myTurn-peeking" & (1 <= num && num <= 3)) {
+                // Send action request to server
+                socket.send(JSON.stringify({ type: 'action', contents: 'peek', peekNum: num }));
+
+                // Hide buttons
+                actionButtons = document.getElementById("actionButtons")
+                actionButtons.innerHTML = ''
+            } else if (gameState == "myTurn-choosemainnum" & (1 <= num && num <= 3)) {
+                // Check if input is needed
+                if (myCards[holdingCard - 1].input) {
+                    // Need input
+                    gameState = "myTurn-chooseinput"
+                    actionText = document.getElementById("actionText")
+                    actionText.textContent = "Click on one of your numbers to use as input for this card."
+                    applyingNum = {type: 'opp', value: num}
+                } else {
+                    // No input required, send everything to the server
+                    socket.send(JSON.stringify({type: 'action', contents: 'playcard', cardnum: holdingCard, applyto: {type: 'opp', value: num}}))
+
+                    // Hide buttons
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    // Card animations
+                    holdCardSent()
+                }
+            } else if (gameState == "myTurn-chooseprepeek" & (1 <= num && num <= 3)) {
+                // Send pre-peek request to server and wait for confirmation
+                socket.send(JSON.stringify({type: 'action', contents: 'prepeek', cardnum: holdingCard, peekNum: num}))
+
+                // Update status and remove cancel button
+                gameState = "myTurn-awaitprepeek"
+                actionButtons = document.getElementById("actionButtons")
+                actionButtons.innerHTML = ''
+                clickDelayPrepeek = true
+                setTimeout(() => clickDelayPrepeek = false, 1000)
+            } else if (!clickDelayPrepeek & gameState == 'myTurn-postprepeek' & (1 <= num && num <= 3)) {
+                // Check if input is needed
+                if (myCards[holdingCard - 1].input) {
+                    // Need input
+                    gameState = "myTurn-postprepeekinput"
+                    actionText = document.getElementById("actionText")
+                    actionText.textContent = "Click on one of your numbers to use as input for this card."
+                    applyingNum = {type: 'opp', value: num}
+
+                    // Show cancel button again
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    button = document.createElement('button')
+                    button.textContent = "Cancel"
+                    button.className = 'actionButton'
+                    button.onclick = () => cancelChoosing()
+                    actionButtons.appendChild(button)
+                } else {
+                    // No input required, send everything to the server
+                    socket.send(JSON.stringify({type: 'action', contents: 'playcardprepeek', applyto: {type: 'opp', value: num}}))
+
+                    // Hide buttons
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    // Card animations
+                    holdCardSent()
+                }
+            }
+        }
+
+        function clickGoal() {
+            if (gameState == 'myTurn-choosemainnum' & !myCards[holdingCard - 1].input) {
+                // No input here, so send everything to the server
+                socket.send(JSON.stringify({type: 'action', contents: 'playcard', cardnum: holdingCard, applyto: {type: 'goal'}}))
+
+                // Hide buttons
+                actionButtons = document.getElementById("actionButtons")
+                actionButtons.innerHTML = ''
+
+                // Card animations
+                holdCardSent()
+            } else if (gameState == 'myTurn-postprepeek' & !myCards[holdingCard - 1].input) {
+                // No input here, so send everything to the server
+                socket.send(JSON.stringify({type: 'action', contents: 'playcardprepeek', applyto: {type: 'goal'}}))
+
+                // Hide buttons
+                actionButtons = document.getElementById("actionButtons")
+                actionButtons.innerHTML = ''
+
+                // Card animations
+                holdCardSent()
+            }
+        }
+
+        function clickPlayerNum(num) {
+            if (gameState == 'myTurn-choosemainnum' & (1 <= num && num <= 3)) {
+                // Check if input is needed
+                if (myCards[holdingCard - 1].input) {
+                    // Need input
+                    gameState = "myTurn-chooseinput"
+                    actionText = document.getElementById("actionText")
+                    actionText.textContent = "Click on a different number to use as input for this card."
+                    applyingNum = {type: 'player', value: num}
+                } else {
+                    // No input required, send everything to the server
+                    socket.send(JSON.stringify({type: 'action', contents: 'playcard', cardnum: holdingCard, applyto: {type: 'player', value: num}}))
+
+                    // Hide buttons
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    // Card animations
+                    holdCardSent()
+                }
+            } else if (gameState == 'myTurn-chooseinput' & (1 <= num && num <= 3)) {
+                if (!(applyingNum.type == 'player' & applyingNum.value == num)) { // Prevent them from using same input as main
+                    // Send everything to the server
+                    socket.send(JSON.stringify({type: 'action', contents: 'playcard', cardnum: holdingCard, applyto: applyingNum, input: num}))
+
+                    // Hide buttons
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    // Card animations
+                    holdCardSent()
+                }
+            } else if (gameState == 'myTurn-postprepeek' & (1 <= num && num <= 3)) {
+                // Check if input is needed
+                if (myCards[holdingCard - 1].input) {
+                    // Need input
+                    gameState = "myTurn-postprepeekinput"
+                    actionText = document.getElementById("actionText")
+                    actionText.textContent = "Click on a different number to use as input for this card."
+                    applyingNum = {type: 'player', value: num}
+
+                    // Show cancel button again
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    button = document.createElement('button')
+                    button.textContent = "Cancel"
+                    button.className = 'actionButton'
+                    button.onclick = () => cancelChoosing()
+                    actionButtons.appendChild(button)
+                } else {
+                    // No input required, send everything to the server
+                    socket.send(JSON.stringify({type: 'action', contents: 'playcardprepeek', applyto: {type: 'player', value: num}}))
+
+                    // Hide buttons
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    // Card animations
+                    holdCardSent()
+                }
+            } else if (gameState == "myTurn-postprepeekinput" & (1 <= num && num <= 3)) {
+                if (!(applyingNum.type == 'player' & applyingNum.value == num)) { // Prevent them from using same input as main
+                    // Send everything to the server
+                    socket.send(JSON.stringify({type: 'action', contents: 'playcardprepeek', applyto: applyingNum, input: num}))
+
+                    // Hide buttons
+                    actionButtons = document.getElementById("actionButtons")
+                    actionButtons.innerHTML = ''
+
+                    // Card animations
+                    holdCardSent()
+                }
+            }
+        }
+
+        function clickPlayerCard(num) {
+            if (gameState == "myTurn-choosecard" & !(myCards[num - 1] == null)) { // Check if there's a card there
+                // Differentiate card type
+                if (myCards[num - 1].prepeek) {
+                    // Has prepeek
+                    gameState = "myTurn-chooseprepeek"
+                    actionText = document.getElementById("actionText")
+                    actionText.textContent = "You've selected a pre-peek card! Click on an opponent's number to peek at it."
+                    holdingCard = num
+
+                    // Display holding card
+                    tt = document.getElementById("actionArea")
+                    newDiv = document.createElement("div")
+                    newDiv.id = 'actionTextFiller'
+                    tt.prepend(newDiv)
+
+                    if (num == 1) {
+                        document.getElementById("playerCard1").style.transform = "translateX(30cqw) translateY(-28cqw)"
+                    } else if (num == 2) {
+                        document.getElementById("playerCard2").style.transform = "translateX(10cqw) translateY(-28cqw)"
+                    } else if (num == 3) {
+                        document.getElementById("playerCard3").style.transform = "translateX(-10cqw) translateY(-28cqw)"
+                    } else if (num == 4) {
+                        document.getElementById("playerCard4").style.transform = "translateX(-30cqw) translateY(-28cqw)"
+                    } else if (num == 5) {
+                        document.getElementById("playerCard5").style.transform = "translateX(-50cqw) translateY(-28cqw)"
+                    }
+
+                } else {
+                    // Does not have prepeek
+                    gameState = "myTurn-choosemainnum"
+                    actionText = document.getElementById("actionText")
+                    if (myCards[num - 1].input) {
+                        actionText.textContent = "Click on a number to use the card on it!"
+                    } else {
+                        actionText.textContent = "Click on a number or the goal to use the card on it!"
+                    }
+                    holdingCard = num
+
+                    // Display holding card
+                    tt = document.getElementById("actionArea")
+                    newDiv = document.createElement("div")
+                    newDiv.id = 'actionTextFiller'
+                    tt.prepend(newDiv)
+
+                    if (num == 1) {
+                        document.getElementById("playerCard1").style.transform = "translateX(30cqw) translateY(-28cqw)"
+                    } else if (num == 2) {
+                        document.getElementById("playerCard2").style.transform = "translateX(10cqw) translateY(-28cqw)"
+                    } else if (num == 3) {
+                        document.getElementById("playerCard3").style.transform = "translateX(-10cqw) translateY(-28cqw)"
+                    } else if (num == 4) {
+                        document.getElementById("playerCard4").style.transform = "translateX(-30cqw) translateY(-28cqw)"
+                    } else if (num == 5) {
+                        document.getElementById("playerCard5").style.transform = "translateX(-50cqw) translateY(-28cqw)"
+                    }
+                }
+            }
+        }
+
+        // Selected to play a card
+        function turnPlayCard() {
+            // Set states and action text
+            gameState = "myTurn-choosecard"
+            actionText = document.getElementById("actionText")
+            actionText.textContent = "Click on a card to use it!"
+
+            // Change buttons
+            actionButtons = document.getElementById("actionButtons")
+            actionButtons.innerHTML = ''
+
+            button = document.createElement('button')
+            button.textContent = "Cancel"
+            button.className = 'actionButton'
+            button.onclick = () => cancelChoosing()
+            actionButtons.appendChild(button)
+        }
+
+
+
+        // Selected to peek an opp card
+        function turnPeekNumber() {
+            // Set states and action text
+            gameState = "myTurn-peeking"
+            actionText = document.getElementById("actionText")
+            actionText.textContent = "Click on an opponent's number to peek at it!"
+
+            // Change buttons
+            actionButtons = document.getElementById("actionButtons")
+            actionButtons.innerHTML = ''
+
+            button = document.createElement('button')
+            button.textContent = "Cancel"
+            button.className = 'actionButton'
+            button.onclick = () => cancelChoosing()
+            actionButtons.appendChild(button)
+        }
+
+        // Selected to skip this turn
+        function turnSkip() {
+            // Send action request to server
+            socket.send(JSON.stringify({ type: 'action', contents: 'skip' }));
+
+            // Hide buttons
+            actionButtons = document.getElementById("actionButtons")
+            actionButtons.innerHTML = ''
+        }
+
+        // WebSocket functions
+        function connectWebSocket() {
+            // Use same origin; this assumes the page is served from the same server
+            socket = new WebSocket(`ws://${location.host}`);
+
+            socket.onopen = () => {
+                console.log('Connected to WebSocket');
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                // Handle sent data
+                if (data.type === 'joined') { // Joined confirmation
+                    console.log(`User succesfully joined channel ${data.id}`)
+                } else if (data.type === 'error') { // Got an error
+                    if (data.id === 1) { // Full room error
+                        window.location.href = `index.html?error=1`
+                    }
+                    if (data.id === 2) { // In progress room error
+                        window.location.href = `index.html?error=2`
+                    }
+                    if (data.id === 3) { // Opponent quit error
+                        window.location.href = `index.html?error=3`
+                    }
+                } else if (data.type === 'start') { // Game starting
+                    beginCountdown(5)
+                } else if (data.type === 'init') { // Initial data receipt
+                    goal = data.goal
+                    myCards = data.cards
+                    myNumbers = data.numbers
+                    cardpile = data.cardpile
+                } else if (data.type === 'game') { // Game updates (important)
+
+                    if (data.contents === 'yourTurn') {
+                        beginTurn(data.canSkip)
+                    } else if (data.contents === 'oppTurn') {
+                        oppTurn()
+                    } else if (data.contents === 'youAction') { // You have performed an action (REMOVE THIS LATER IF A COUNTDOWN BAR HAS BEEN ADDED)
+                        if (data.action === 'skip') {
+                            gameState = "actionDisplay"
+                            actionText = document.getElementById("actionText")
+                            actionText.textContent = "You are skipping this turn!"
+                        } else if (data.action === 'peek') {
+                            gameState = "actionDisplay"
+                            actionText = document.getElementById("actionText")
+                            actionText.textContent = "You sneakily peeked at an opponent number..."
+                            displayPeekedNumber(data.peekNum, data.value)
+                        } else if (data.action === 'playedCard') {
+                            hideAllPeeks()
+                            gameState = "actionDisplay"
+                            actionText = document.getElementById("actionText")
+                            actionText.textContent = "You played a card!" // CARD WILL BE DISPLAYED, INFO IS IN THE DATA OBJECT (OR ADD MORE IN SERVER IF NECESSARY)
+                            displayPlayedCard(data.card)
+                        }
+                    } else if (data.contents === 'oppAction') { // Opp has performed an action
+                        if (data.action === 'skip') {
+                            gameState = "actionDisplay"
+                            actionText = document.getElementById("actionText")
+                            actionText.textContent = "Your opponent is skipping their turn!"
+                        } else if (data.action === 'peek') {
+                            gameState = "actionDisplay"
+                            actionText = document.getElementById("actionText")
+                            if (data.peekNum == 1) {
+                                actionText.textContent = "Your opponent is peeking at your first number!"
+                            } else if (data.peekNum == 2) {
+                                actionText.textContent = "Your opponent is peeking at your second number!"
+                            } else {
+                                actionText.textContent = "Your opponent is peeking at your third number!"
+                            }
+                        } else if (data.action === 'playedCard') {
+                            gameState = "actionDisplay"
+                            actionText = document.getElementById("actionText")
+                            if (data.applyto == "player") {
+                                actionText.textContent = "Your opponent used this card on one of their numbers!"
+                            } else if (data.applyto == "opp") {
+                                actionText.textContent = "Your opponent used this card on one of your numbers!"
+                            } else if (data.applyto == "goal") {
+                                actionText.textContent = "Your opponent used this card on the goal!"
+                            }
+                            displayPlayedCard(data.card)
+                        }
+                    } else if (data.contents === 'youPrepeek') { // You are pre-peeking and now HAVE to use your card
+                        gameState = "myTurn-postprepeek"
+
+                        displayPeekedNumber(data.peekNum, data.value)
+
+                        actionText = document.getElementById("actionText")
+                        if (myCards[holdingCard - 1].input) {
+                            actionText.textContent = "Click on a number to use the card on it!"
+                        } else {
+                            actionText.textContent = "Click on a number or the goal to use the card on it!"
+                        }
+                    } else if (data.contents === 'oppPrepeek') { // Opp is prepeeking
+                        actionText = document.getElementById("actionText")
+                        if (data.peekNum == 1) {
+                            actionText.textContent = "Your opponent is pre-peeking at your first number!"
+                        } else if (data.peekNum == 2) {
+                            actionText.textContent = "Your opponent is pre-peeking at your second number!"
+                        } else {
+                            actionText.textContent = "Your opponent is pre-peeking at your third number!"
+                        }
+                    }
+                } else if (data.type == 'update') {
+                    goal = data.goal
+                    myCards = data.cards
+                    myNumbers = data.numbers
+                    cardpile = data.cardpile
+                    golds = data.golds
+                    empties = data.empties
+                    displayCards(myCards)
+                    displayNumbers(myNumbers,goal)
+                    displayGoal(goal)
+                    displayCardpile(cardpile)
+                    displayGoldsAndEmpties(golds,empties)
+                } else if (data.type == "end") {
+                    overlay = document.getElementById("overlay") // Remove other overlays for safety
+                    if (overlay) {overlay.remove()}
+                    ovDiv = document.createElement("div")
+                    ovDiv.id = "overlay"
+                    title = document.createElement("h1")
+                    title.id = "overlayText"
+                    para = document.createElement("p")
+                    para.id = "overlayPara"
+                    button = document.createElement("button")
+                    button.id = "copyButton"
+                    button.onclick = () => mainMenu()
+                    button.textContent = "Return to main menu"
+                    // Display right message
+                    if (data.contents == 'win') {
+                        title.textContent = "You won the battle!"
+                        if (data.breaker) {
+                            para.textContent = "A tiebreaker was used..."
+                        } else {
+                            para.textContent = `Your number ${data.winNum} was closest to the goal of ${data.goal}...`
+                        }
+                        title.textContent = "You won the battle!"
+                    } else if (data.contents == 'lose') {
+                        title.textContent = "You lost the battle..."
+                        if (data.breaker) {
+                            para.textContent = "A tiebreaker was used..."
+                        } else {
+                            para.textContent = `Your opponent's number ${data.winNum} was closest to the goal of ${data.goal}...`
+                        }
+                        
+                    } else if (data.contents == 'tie') {
+                        title.textContent = "The battle ended in a tie!"
+                        para.textContent = "How did this even happen..?"
+                    }
+                    // Display everything
+                    ovDiv.appendChild(title)
+                    ovDiv.appendChild(para)
+                    ovDiv.appendChild(button)
+                    document.body.appendChild(ovDiv)
+                }
+            };
+
+            socket.onclose = () => {
+                // Optional code to handle disconnection from WebSocket
+            };
+        }
+
+        async function displayPlayedCard(card) {
+            const cardDiv = document.createElement("div")
+            cardDiv.id = "playedCard"
+            cardDiv.innerHTML = (await (await fetch('cards.json')).json())[card.rarity][card.id - 1]
+            if (card.prepeek) {cardDiv.innerHTML += "<img src=\"cards/prepeek.png\" class=\"overlayImgPlayed\" style=\"image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"}
+            document.getElementById("actionArea").prepend(cardDiv)
+        }
+
+        function displayGoldsAndEmpties(golds,empties) {
+            // Golds
+            for (let i = 0; i <= 2; i++) {
+                div = document.getElementById(`opponentNumber${i+1}`)
+                if (golds[i]) {
+                    div.style.backgroundImage = "url('paper_gold.png')"
+                } else {
+                    div.style.backgroundImage = "url('paper.png')"
+                }
+            }
+
+            // Empties
+            for (let i = 0; i <= 4; i++) {
+                div = document.getElementById(`opponentCard${i+1}`)
+                if (empties[i]) {
+                    div.innerHTML = ""
+                } else {
+                    div.innerHTML = "<img src=\"cards/back.png\" alt=\"card\" style=\"width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;object-fit:contain;display:block;\">"
+                }
+            }
+        }
+
+        function mainMenu() {
+            window.location.href = 'index.html'
+        }
+
+        // Channel joining
+        function joinChannel(id) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) { // If somehow not already connected to WebSocket, do that!
+                console.log("(Re)connecting to WebSocket...")
+                connectWebSocket();
+                setTimeout(() => {
+                    socket.send(JSON.stringify({ type: 'join', channel: id }));
+                }, 500); // small delay to allow socket to connect
+            } else {
+                socket.send(JSON.stringify({ type: 'join', channel: id }));
+            }
+        }
+
+        // Prevent right-clicking default
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        // Detect right-clicking on player cards to bring up info menu
+        const target1 = document.getElementById("playerCard1")
+        const target2 = document.getElementById("playerCard2")
+        const target3 = document.getElementById("playerCard3")
+        const target4 = document.getElementById("playerCard4")
+        const target5 = document.getElementById("playerCard5")
+
+        target1.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // still needed here
+            if (myCards[0] != null) {
+                cardInfo(myCards[0])
+            }
+        });
+
+        target2.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // still needed here
+            if (myCards[1] != null) {
+                cardInfo(myCards[1])
+            }
+        });
+
+        target3.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // still needed here
+            if (myCards[2] != null) {
+                cardInfo(myCards[2])
+            }
+        });
+
+        target4.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // still needed here
+            if (myCards[3] != null) {
+                cardInfo(myCards[3])
+            }
+        });
+
+        target5.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // still needed here
+            if (myCards[4] != null) {
+                cardInfo(myCards[4])
+            }
+        });
+
+        async function cardInfo(card) {
+            // Create overlay
+            ovDiv = document.createElement("div")
+            ovDiv.id = "overlay"
+            buttoon = document.createElement("button")
+            buttoon.id = "overlayInfoButton"
+            buttoon.textContent = "Close"
+            buttoon.onclick = () => closeCardInfo()
+
+            contents = (await (await fetch('cardsInfo.json')).json())[card.rarity][card.id - 1]
+
+            ovDiv.innerHTML = contents
+            ovDiv.appendChild(buttoon)
+
+            document.body.appendChild(ovDiv)
+        }
+
+        function closeCardInfo() {
+            document.getElementById("overlay").remove()
+        }
+
+        // Try to connect user to given battle room (if exists and if not two players already)
+        joinChannel(battleID)
+    </script>
+</body>
+</html>

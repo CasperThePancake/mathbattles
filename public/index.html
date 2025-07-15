@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">  
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="mainBattle">
+        <h1 id="titleName">⚔️ Math Battles 🧮</h1>
+        <button onclick="tutorial()">Tutorial</button>
+        <button onclick="startDuel()">Start battle</button>
+    </div>
+    <script>
+        function startDuel() {
+            //Placeholder
+            const id = 42;
+            window.location.href = `battle.html?id=${id}`;
+        }
+
+        function tutorial() {
+            window.location.href = `tutorial.html`;
+        }
+
+        // Get URL params //
+
+        // Get the query string
+        const queryString = window.location.search;
+
+        // Parse the query string
+        const urlParams = new URLSearchParams(queryString);
+
+        // Get battle ID
+        error = urlParams.get("error")
+        if (error) {
+            main = document.getElementById("mainBattle")
+            errorMessage = document.createElement("p")
+            errorMessage.style = "color: red;"
+            if (error == 1) {
+                errorMessage.textContent = "Error: this room is already full!"
+            } else if (error == 2) {
+                errorMessage.textContent = "Error: this room is already in progress!"
+            } else if (error == 3) {
+                errorMessage.textContent = "Error: you or your opponent left the room!"
+            }
+            main.appendChild(errorMessage)
+        }
+
+
+    </script>
+</body>
+</html>
