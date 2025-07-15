@@ -592,7 +592,9 @@
         // WebSocket functions
         function connectWebSocket() {
             // Use same origin; this assumes the page is served from the same server
-            socket = new WebSocket(`ws://${location.host}`);
+            const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            socket = new WebSocket(`${protocol}//${location.host}`);
+
 
             socket.onopen = () => {
                 console.log('Connected to WebSocket');
