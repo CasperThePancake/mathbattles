@@ -3,23 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math battle</title>
+    <title>Math Battles</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">  
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
 </head>
 <body>
-    <div id="mainBattle">
-        <h1 id="titleName">⚔️ Math Battles 🧮</h1>
-        <button onclick="tutorial()">Tutorial</button>
-        <button onclick="startDuel()">Start battle</button>
+    <div id="indexDiv">
+<div id="divBG">
+  <div class="scroll-strip" id="scrollBottom">
+    <div class="scroll-track" id="trackBottom">
+      <div class="scroll-segment">
+        <div class="card-row">
+          <img src="cards/basic/plus_one.png">
+          <img src="cards/common/times.png">
+          <img src="cards/legendary/orbit.png">
+          <img src="cards/uncommon/digit_product.png">
+          <img src="cards/common/square.png">
+          <img src="cards/rare/mod.png">
+          <img src="cards/epic/fibonacci_jump.png">
+          <img src="cards/basic/divide_ten.png">
+          <img src="cards/uncommon/power.png">
+          <img src="cards/rare/square_jump.png">
+        </div>
+      </div>
+      <div class="scroll-segment">
+        <div class="card-row">
+          <img src="cards/basic/plus_one.png">
+          <img src="cards/common/times.png">
+          <img src="cards/legendary/orbit.png">
+          <img src="cards/uncommon/digit_product.png">
+          <img src="cards/common/square.png">
+          <img src="cards/rare/mod.png">
+          <img src="cards/epic/fibonacci_jump.png">
+          <img src="cards/basic/divide_ten.png">
+          <img src="cards/uncommon/power.png">
+          <img src="cards/rare/square_jump.png">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-strip" id="scrollTop">
+    <div class="scroll-track" id="trackTop">
+      <div class="scroll-segment">
+        <div class="card-row">
+          <img src="cards/basic/halve.png">
+          <img src="cards/common/sqrt.png">
+          <img src="cards/rare/multiple_jump.png">
+          <img src="cards/legendary/halve_distance.png">
+          <img src="cards/epic/double_factorial.png">
+          <img src="cards/uncommon/prepend.png">
+          <img src="cards/basic/double.png">
+          <img src="cards/rare/palindrome.png">
+          <img src="cards/uncommon/sort_ascend.png">
+          <img src="cards/common/cube.png">
+        </div>
+      </div>
+      <div class="scroll-segment">
+        <div class="card-row">
+          <img src="cards/basic/halve.png">
+          <img src="cards/common/sqrt.png">
+          <img src="cards/rare/multiple_jump.png">
+          <img src="cards/legendary/halve_distance.png">
+          <img src="cards/epic/double_factorial.png">
+          <img src="cards/uncommon/prepend.png">
+          <img src="cards/basic/double.png">
+          <img src="cards/rare/palindrome.png">
+          <img src="cards/uncommon/sort_ascend.png">
+          <img src="cards/common/cube.png">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        <h1 id="titleName"><span id="titleTitle">Math Battles</span></h1>
+        <button onclick="tutorial()" id="indexButton">Tutorial</button>
+        <button onclick="startDuel()" id="indexButton">Start battle</button>
+        <p id="indexNote">Join an opponent's game by using their shared link!</p>
     </div>
     <script>
-        function startDuel() {
-            //Placeholder
-            const id = 42;
-            window.location.href = `battle.html?id=${id}`;
+        async function startDuel() {
+            const res = await fetch('/create-room');
+            const { roomId } = await res.json();
+            window.location.href = `battle.html?id=${roomId}`;
         }
 
         function tutorial() {
@@ -49,8 +117,6 @@
             }
             main.appendChild(errorMessage)
         }
-
-
     </script>
 </body>
 </html>

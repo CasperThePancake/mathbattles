@@ -24,6 +24,93 @@ h1, h2, h3 {
     font-weight: normal;
 }
 
+#indexDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width:100%;
+    height:100%;
+}
+
+#divBG {
+  position: absolute;
+  width:100%;
+  height:100%;
+  pointer-events: none;
+}
+
+.scroll-strip {
+  position: absolute;
+  width: 100%;
+  height: 15%;
+  overflow: hidden;
+}
+
+#scrollBottom {
+    top: 80%;
+    left: 0;
+}
+
+#scrollTop {
+    top: 5%;
+    right: 0;
+}
+
+.scroll-track {
+  display: flex;
+  height:100%;
+  width: 200%; /* holds 2 full-width segments */
+}
+
+#trackBottom {
+    animation: scroll-loop 30s linear infinite;
+}
+
+#trackTop {
+    animation: scroll-loop-reverse 30s linear infinite;
+}
+
+.scroll-segment {
+  width: 100vw; /* one full screen width */
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-row {
+  height:100%;
+  display: flex;
+  width:100%;
+  justify-content: space-between;
+  padding: 0 2.2%;
+}
+
+.card-row img {
+  height:100%;
+  flex-shrink: 0;
+  opacity: 0.95;
+}
+
+@keyframes scroll-loop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-loop-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
 #main {
     display: flex;
     align-items: center;
@@ -113,7 +200,8 @@ h1, h2, h3 {
 #cardPileText {
     position: relative;
     font-size: 30cqw;
-    top: -5cqw
+    top: -5cqw;
+    opacity: 0.85;
 }
 
 #actionArea {
@@ -129,6 +217,7 @@ h1, h2, h3 {
 
 #actionAreaContent {
     height:100%;
+    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -224,6 +313,7 @@ h1, h2, h3 {
     left: 6cqw;
     text-shadow: 1px 1px 1px black, 0 0 100px black, 0 0 1px black;
     letter-spacing: 0.5cqw;
+    opacity: 0.85;
 }
 
 .overlayImg {
@@ -269,6 +359,20 @@ h1, h2, h3 {
 
 #titleName {
     font-size: 5em;
+    margin-bottom:0;
+}
+
+#titleTitle {
+    text-shadow: 1px 0px 1px #CCCCCC, 0px 1px 1px #EEEEEE, 2px 1px 1px #CCCCCC, 1px 2px 1px #EEEEEE, 3px 2px 1px #CCCCCC, 2px 3px 1px #EEEEEE, 4px 3px 1px #CCCCCC, 3px 4px 1px #EEEEEE, 5px 4px 1px #CCCCCC, 4px 5px 1px #EEEEEE, 6px 5px 1px #CCCCCC, 5px 6px 1px #EEEEEE, 7px 6px 1px #CCCCCC, 2px 2px 2px rgba(206,89,55,0);
+}
+
+#indexButton {
+    height:3%;
+    margin-top: 2%;
+}
+
+#indexNote {
+    font-size:large;
 }
 
 .tutorialTitle {
@@ -278,4 +382,23 @@ h1, h2, h3 {
 
 #tutorialMain > p {
     font-size: 1.5em;
+}
+
+#barWrapper {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+#countBarWrapper {
+    width: 100%;
+    height: 20px;
+    background-color: black;
+    animation: shrinkBar 5s linear forwards;
+}
+
+@keyframes shrinkBar {
+    from { width: 100%; }
+    to   { width: 0%; }
 }

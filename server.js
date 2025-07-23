@@ -12,6 +12,15 @@ app.use(express.static('public'));
 // Map of channelNumber => Set of client sockets
 const channels = new Map();
 
+app.get('/create-room', (req, res) => {
+  let roomId;
+  do {
+    roomId = Math.floor(Math.random() * 10000).toString();
+  } while (channels.has(roomId));
+
+  res.json({ roomId });
+});
+
 wss.on('connection', (ws) => { // ws indicating a client object
   console.log('🔌 New client connected');
 
@@ -65,7 +74,7 @@ wss.on('connection', (ws) => { // ws indicating a client object
             }
 
             // Go per-action
-            if (data.contents == 'skip' & channels.get(currentChannel).get("innerState") == 'choosingAction') { // User trying to skip (REMOVE THIS LATER IF YOUVE MADE SURE TO RESET THE CANSKIP BOOL FOR OTHER ACTIONS HERE! ALSO IF YOU HAVE HANDLED INVALID REQUESTS > LET EM CHOOSE AGAIN!)
+            if (data.contents == 'skip' & channels.get(currentChannel).get("innerState") == 'choosingAction') { // User trying to skip (REMOVE THIS LATER IF YOU HAVE HANDLED INVALID REQUESTS > LET EM CHOOSE AGAIN!)
                 if (channels.get(currentChannel).get("canSkip").get(ws)) {
                     // Turn is being skipped
                     channels.get(currentChannel).set("state", "actionDisplay")
@@ -269,7 +278,7 @@ function initGame(channel) {
     } else {
         channels.get(channel).set("goal", Math.floor(Math.random() * 91) - 100) // -10 to -100
     }
-    
+
     // Choose player cards
     channels.get(channel).set("cards", new Map())
 
@@ -518,9 +527,9 @@ function playCard(channel,cardNum,applyTo,input) {
         } else if (channels.get(channel).get("cards").get(player)[cardNum - 1].id == 8) { // RANDOMIZE
             if (applyTo.type == 'goal') {
                 if (Math.random() <= 0.5) {
-                    channels.get(channel).set("goal", Math.floor(Math.random() * 91) + 10) // 10 to 100
+                    outputValue = Math.floor(Math.random() * 91) + 10 // 10 to 100
                 } else {
-                    channels.get(channel).set("goal", Math.floor(Math.random() * 91) - 100) // -10 to -100
+                    outputValue = Math.floor(Math.random() * 91) - 100 // -10 to -100
                 }
             } else {
                 outputValue = Math.floor(Math.random() * 21) - 10
@@ -808,4 +817,8 @@ function sumDivisors(n) {
   return sum;
 }
 
-// NOTE: if a request is sent by like clicking shit (or anything actually) it might take a bit so prevent them from spamming requests in that window by perhaps setting the state to "waiting" like you already do for prepeek
+// WIP
+// wrong send request handling
+// spam handling
+// room creation page
+// better card information and tutorial
