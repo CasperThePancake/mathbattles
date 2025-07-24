@@ -310,7 +310,7 @@
                 }
 
                 // Hide holding card filler
-                if (gameState != "myTurn-peeking") {
+                if (gameState != "myTurn-peeking" && gameState != "myTurn-choosecard") {
                     document.getElementById("actionTextFiller").remove()
                 }
             } else if (gameState == "myTurn-postprepeekinput") {
