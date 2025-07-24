@@ -6,6 +6,7 @@ body {
     background-size: 128px 128px; /* change this to control the tile size */
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    overflow-x: hidden;
 }
 
 button {
@@ -15,6 +16,7 @@ button {
 
 h1, h2, h3 {
     font-weight: normal;
+    text-align: left;
 }
 
 p {
@@ -23,30 +25,61 @@ p {
     margin-right: 5%;
 }
 
-#main {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+h2 {
+    font-size: 2.5em;
 }
 
 #tutorialMain {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     flex-direction: column;
     aspect-ratio: 16 / 9;
     text-align: left;
 }
 
-#titleName {
-    font-size: 5em;
-}
-
 .tutorialTitle {
-    font-size: 3em;
     margin: 0;
+    width:100%;
+    text-align: center;
 }
 
 #tutorialMain > p {
     font-size: 1.5em;
+}
+
+.info-block > span {
+    font-size: 1.5em;
+}
+
+#titleName {
+    font-size: 5em;
+    margin-bottom:0;
+    width:100%;
+    text-align: center;
+}
+
+#titleTitle {
+    width:100vw;
+    text-align: center;
+    text-shadow: 1px 0px 1px #CCCCCC, 0px 1px 1px #EEEEEE, 2px 1px 1px #CCCCCC, 1px 2px 1px #EEEEEE, 3px 2px 1px #CCCCCC, 2px 3px 1px #EEEEEE, 4px 3px 1px #CCCCCC, 3px 4px 1px #EEEEEE, 5px 4px 1px #CCCCCC, 4px 5px 1px #EEEEEE, 6px 5px 1px #CCCCCC, 5px 6px 1px #EEEEEE, 7px 6px 1px #CCCCCC, 2px 2px 2px rgba(206,89,55,0);
+}
+
+.info-block {
+    display: flex;
+    align-items: center; /* Vertically centers text */
+    margin-bottom: 1em;
+    margin-left:5em;
+    width:100%;
+}
+
+.info-block img {
+    margin-right: 10px;
+}
+
+#buttonDiv {
+    width:100%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
 }

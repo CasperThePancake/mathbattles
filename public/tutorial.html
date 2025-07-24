@@ -12,18 +12,74 @@
 </head>
 <body>
     <div id="tutorialMain">
-        <h1 id="titleName">⚔️ Math Battles 🧮</h1>
+        <h1 id="titleName"><span id="titleTitle">Math Battles</span></h1>
         <h2 class="tutorialTitle">Welcome to math battles!</h2>
-        <p>Welcome to math battles! In this game, you and one opponent go head-to-head, fighting with numbers.<br><br>Each player has three numbers to play with, which are randomly chosen at the start of a battle. Also randomly chosen is the goal number. This number is visible to each player and is very important: to win, one of your 3 numbers must be the closest to that goal!</p>
-        <h2 class="tutorialTitle">Using battle cards</h2>
-        <p>At the start of the game, each player is also given 5 random battle cards to use. Each card performs some mathematical operation, like sum or multiplication, to a selected number. You can use cards on your own numbers, your opponent's numbers or even on the goal!<br><br>Some cards require an input. For example, you might use the "minus" card on an opponent's number to subtract some value from their number. That value is an input and it must always be one of your own numbers. So if you have the number 4 and your opponent has the number 7, you can use the "minus" card on their card with your card as an input, which will change their number into 7-4 = 3. <strong>For obvious reasons, cards that take an input cannot be used on the goal number!</strong><br><br>Each game has a card pile, which is a reserve pool of cards that is used to draw a new card for you once you've used one for a move. If the card pile runs out and is empty, you will not receive new cards.</p>
-        <h2 class="tutorialTitle">Peeking at opponent numbers</h2>
-        <p>During a battle, it might be helpful to know what numbers your opponent currently has. This allows you to mess them up by making smart use of your cards. Normally their numbers are hidden to you, but you can use up a turn to peek at one of their numbers!<br><br>Additionally, there is a small chance for a card to come as a "pre-peek" version. This means that playing that card also gives you a free number peek before the actual card move; all in one turn!</p>
-        <h2 class="tutorialTitle">Skipping your turn</h2>
-        <p>Sometimes you're just in a good position and you don't want to do anything during a turn. You can do that by simply skipping the turn. The only downside is that this action cannot be performed twice in a row.</p>
-        <h2 class="tutorialTitle">End of the game</h2>
-        <p>The game ends if one of the players runs out of cards, which can happen after the card pile runs out. At this point, the player with the closest number to the goal number is the winner. If there is a tie, meaning both players share a closest number, there will be a tie-breaker. Here the player whose three numbers add up to the largest absolute sum, will win. For example, the numbers (13,-2,4) win over (-5,-3,2) since 13+2+4 = 19 > 5+3+2 = 10.</p>
-        <button onclick="window.location.href = `index.html`">Return</button>
+
+        <div class="info-block">
+        <img src="flag.png" alt="Flag" width="5%">
+        <span>At the start of the game, a goal number is randomly chosen.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="paper.png" alt="Paper" width="8%">
+        <span>Each player also starts with 3 random numbers of their own.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="cards/back.png" alt="Card Back" width="4%">
+        <span>Players use battle cards in order to obtain the closest number to the goal number.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="cards/basic/times_ten.png" alt="Times Ten" width="4%">
+        <span>These cards perform mathematical operations on player numbers, opponent numbers or even the goal number.<br>If you're not sure what a card does, right-click it for a guide.<br>Resulting numbers will always be snapped to the range [-1.000.000 , 1.000.000].</span>
+        </div>
+
+        <div class="info-block">
+        <img src="cards/uncommon/root.png" alt="Root" width="4%">
+        <span>While every card is applied to a main number, some also require another number as input.<br>The card shown here applies the i-th root to a number, where i is an input number.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="cards/rare/mod.png" alt="Root" width="4%">
+        <span>You always select the main number (player, opponent, goal) first and the input last, if necessary.<br>The input number must always be one of your player numbers.<br>If you apply the card to a player number, the input number has to be a different one.<br>For obvious gameplay reasons, cards with inputs cannot be used on the goal number.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="peek.png" alt="Peek" width="4%">
+        <span>Your opponent's numbers are always hidden from you...<br>... but sometimes taking a little peek could help you out!<br>It tells you how close they are and how you can use cards to get in their way.<br>A turn can therefore be used to peek at one opponent number.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="cards/examplePrepeek.png" alt="Prepeek" width="4%">
+        <span>There's a small chance for a card to come with a pre-peek, denoted by a green corner.<br>If you use this card, you get to peek at an opponent's number first.<br>All that in one turn!</span>
+        </div>
+
+        <div class="info-block">
+        <img src="skip.png" alt="Skip" width="4%">
+        <span>If you don't feel like risking a move, you can also skip your turn.<br>You cannot skip a turn twice in a row.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="cardpile_3.png" alt="Card pile" width="4%">
+        <span>Players start with 5 random cards.<br>When a card is used up, a new card will automatically be drawn from the card pile.<br>When the card pile is empty, no more new cards are given.</span>
+        </div>
+
+        <div class="info-block">
+        <img src="cardpile_0.png" alt="Game end" width="4%">
+        <span>The game ends once one of the players runs out of cards.<br>The winner is the player who has the closest number to the goal in absolute distance.<br>Even though you have 3 cards, only the closest one is looked at!</span>
+        </div>
+
+        <div class="info-block">
+        <img src="paper_gold.png" alt="Golden number" width="8%">
+        <span>In the case of a tie, the player whose 3 numbers add up to the highest sum wins.<br>The sum is absolute, meaning only the value is counted and not the sign (+-) of a number.</span>
+        </div>
+
+        <p>Shhh... don't tell anyone this, but when you or an opponent's number is exactly equal to the goal, I heard the number's paper turns gold..!</p>
+
+        <h2 class="tutorialTitle">Good luck in your battles!</h2>
+
+        <div id="buttonDiv"><button onclick="window.location.href = `index.html`">Return</button></div>
     </div>
 </body>
 </html>

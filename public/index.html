@@ -84,10 +84,8 @@
         <p id="indexNote">Join an opponent's game by using their shared link!</p>
     </div>
     <script>
-        async function startDuel() {
-            const res = await fetch('/create-room');
-            const { roomId } = await res.json();
-            window.location.href = `battle.html?id=${roomId}`;
+        function startDuel() {
+            window.location.href = `create.html`;
         }
 
         function tutorial() {
@@ -105,7 +103,7 @@
         // Get battle ID
         error = urlParams.get("error")
         if (error) {
-            main = document.getElementById("mainBattle")
+            main = document.getElementById("indexDiv")
             errorMessage = document.createElement("p")
             errorMessage.style = "color: red;"
             if (error == 1) {
@@ -117,6 +115,40 @@
             }
             main.appendChild(errorMessage)
         }
+
+        function titleGlitch() {
+          current = document.getElementById("titleTitle").textContent
+          newer = document.getElementById("titleTitle").textContent
+          while (current == newer) {
+            newer = leetifyRandomChar("Math Battles")
+          }
+          document.getElementById("titleTitle").textContent = newer
+
+          setTimeout(titleGlitch,Math.random()*200+100)
+        }
+
+        function leetifyRandomChar(str) {
+  const leetMap = { a: '4', e: '3', t: '7', l: '1', s: '5' };
+  const indices = [];
+
+  // Collect indices of characters that can be leetified
+  for (let i = 0; i < str.length; i++) {
+    if (leetMap[str[i].toLowerCase()]) {
+      indices.push(i);
+    }
+  }
+
+  if (indices.length === 0) return str; // no replaceable characters
+
+  const randomIndex = indices[Math.floor(Math.random() * indices.length)];
+  const char = str[randomIndex];
+  const leetChar = leetMap[char.toLowerCase()];
+
+  // Replace character at randomIndex
+  return str.slice(0, randomIndex) + leetChar + str.slice(randomIndex + 1);
+}
+
+        titleGlitch()
     </script>
 </body>
 </html>

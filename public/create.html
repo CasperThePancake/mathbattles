@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a room</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">  
+    <link rel="stylesheet" href="styleCreate.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+</head>
+<body>
+    <div id="createBody">
+        <h1>Create a Battle</h1>
+        <h2>Configure your battle's options</h2>
+        <div id="preset" class="option">
+            <p>Preset: </p>
+            <select name="preset" id="presetSelect">
+                <option value="default">Default</option>
+                <option value="custom">Custom</option>
+            </select>
+        </div>
+
+        <hr>
+
+        <div id="cardAmount" class="option">
+            <p>Card pile size: </p>
+            <input type="number" value="15" name="cardAmount">
+        </div>
+
+        <div id="prepeek" class="option">
+            <p>Enable pre-peek cards: </p>
+            <input type="checkbox" checked=true name="prepeek">
+        </div>
+
+        <div id="skipping" class="option">
+            <p>Enable skipping: </p>
+            <input type="checkbox" checked=true name="skipping">
+        </div>
+
+        <hr>
+
+        <button onclick="startDuel()">Create</button>
+        <button onclick="window.location.href = `index.html`" style="margin-top:1%;">Cancel</button>
+    </div>
+    <script>
+        let selection = {'cardAmount': 15, 'prepeek': true, 'skipping': true}
+
+        let presets = {
+            'default': {'cardAmount': 15, 'prepeek': true, 'skipping': true}
+        }
+
+        // Detect if an input was edited
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                detectPreset()
+            });
+        });
+
+        function detectPreset() {
+            selection = {'cardAmount': parseInt(document.querySelector('input[name="cardAmount"]').value), 'prepeek': document.querySelector('input[name="prepeek"]').checked, 'skipping': document.querySelector('input[name="skipping"]').checked}
+            if (containsEquivalent(selection,Object.values(presets))) {
+                document.getElementById("presetSelect").value = Object.keys(presets).find(k => JSON.stringify(presets[k]) === JSON.stringify(selection));
+            } else {
+                document.getElementById("presetSelect").value = 'custom'
+            }
+        }
+
+        async function startDuel() {
+            const res = await fetch('/create-room', {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(selection)
+            })
+            const { roomId } = await res.json();
+            window.location.href = `battle.html?id=${roomId}`;
+        }
+
+        function containsEquivalent(obj, collection) {
+  const str = JSON.stringify(obj);
+  return collection.some(item => JSON.stringify(item) === str);
+}
+    </script>
+</body>
+</html>

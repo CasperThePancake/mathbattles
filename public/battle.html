@@ -12,8 +12,10 @@
 </head>
 <body>
     <div id="overlay">
-        <h1 id="overlayText">Waiting for opponent to join...</h1>
-        <button onclick="copyInviteLink()" id="copyButton">Copy invite link 📋</button>
+        <div id="overlayTop">
+            <h1 id="overlayText">Waiting for opponent to join...</h1>
+            <button onclick="copyInviteLink()" id="copyButton">Copy invite link 📋</button>
+        </div>
     </div>
     <div id="mainBattle">
         <div id="opponentMain">
@@ -88,7 +90,7 @@
 
         // Copying invite link
         function copyInviteLink() {
-            navigator.clipboard.writeText("https://mathgame.com/battle?id="+battleID); // Placeholder URL!
+            navigator.clipboard.writeText("https://mathbattles.onrender.com/battle.html?id="+battleID);
             button = document.getElementById("copyButton")
             button.innerHTML = "Copied invite link!"
         }
@@ -128,7 +130,7 @@
             pileText.textContent = `${amount}`
 
             const pile = document.getElementById("cardPile")
-            if (15 <= amount && amount <= 25) {
+            if (15 <= amount) {
                 pile.style.backgroundImage = "url('cardpile_3.png')"
             } else if (5 <= amount && amount < 15) {
                 pile.style.backgroundImage = "url('cardpile_2.png')"
@@ -874,7 +876,7 @@ async function joinChannel(id) {
         async function cardInfo(card) {
             // Create overlay
             ovDiv = document.createElement("div")
-            ovDiv.id = "overlay"
+            ovDiv.id = "overlayCard"
             buttoon = document.createElement("button")
             buttoon.id = "overlayInfoButton"
             buttoon.textContent = "Close"
@@ -889,7 +891,7 @@ async function joinChannel(id) {
         }
 
         function closeCardInfo() {
-            document.getElementById("overlay").remove()
+            document.getElementById("overlayCard").remove()
         }
 
         function showCountBar() {

@@ -8,15 +8,24 @@ const wss = new WebSocket.Server({ server });
 const PORT = 3000;
 
 app.use(express.static('public'));
+app.use(express.json());
 
 // Map of channelNumber => Set of client sockets
 const channels = new Map();
 
-app.get('/create-room', (req, res) => {
+app.post('/create-room', (req, res) => {
   let roomId;
   do {
-    roomId = Math.floor(Math.random() * 10000).toString();
+    roomId = Math.floor(Math.random() * 10000);
   } while (channels.has(roomId));
+
+  selection = req.body
+
+    channels.set(roomId, new Map());
+    channels.get(roomId).set("clients", new Set())
+    channels.get(roomId).set("state", "waiting")
+    channels.get(roomId).set("options", selection)
+    console.log(`➕ Channel with ID ${roomId} created by client`)
 
   res.json({ roomId });
 });
@@ -40,7 +49,7 @@ wss.on('connection', (ws) => { // ws indicating a client object
                     channels.get(currentChannel)?.delete(ws);
                 }
 
-                // Create new channel if non-existent
+                // Create new channel if non-existent (WIP this should now technically error)
                 if (!channels.has(channel)) { 
                     channels.set(channel, new Map());
                     channels.get(channel).set("clients", new Set())
@@ -98,8 +107,10 @@ wss.on('connection', (ws) => { // ws indicating a client object
                 // No checks to do
                 channels.get(currentChannel).set("state", "actionDisplay")
                 channels.get(currentChannel).set("innerState", "actionDisplay")
-                channels.get(currentChannel).get("canSkip").set(ws, true) // Reset canskip bool for next turn
-
+                if (channels.get(currentChannel).get("options")["skipping"]) {
+                    channels.get(currentChannel).get("canSkip").set(ws, true) // Reset canskip bool for next turn
+                }
+                
                 // Get peeked number
                 const clients = channels.get(currentChannel).get("clients")
                 for (let client of clients) {
@@ -132,7 +143,9 @@ wss.on('connection', (ws) => { // ws indicating a client object
                     }
 
                     // Valid move! Play the card and update players
-                    channels.get(currentChannel).get("canSkip").set(ws, true) // Reset canskip bool for next turn
+                    if (channels.get(currentChannel).get("options")["skipping"]) {
+                        channels.get(currentChannel).get("canSkip").set(ws, true) // Reset canskip bool for next turn
+                    }
 
                     if (channels.get(currentChannel).get("cards").get(ws)[data.cardnum - 1].input) {
                         playCard(currentChannel, data.cardnum, data.applyto, data.input)
@@ -159,7 +172,6 @@ wss.on('connection', (ws) => { // ws indicating a client object
                     }
 
                     // Send action data to clients
-                    channels.get(currentChannel).get("canSkip").set(ws, true) // Reset canskip bool for next turn
                     for (let client of clients) {
                         if (client == ws) {
                             client.send(JSON.stringify({ type: 'game', contents: 'youPrepeek', peekNum: data.peekNum, value: peekNum}))
@@ -183,7 +195,9 @@ wss.on('connection', (ws) => { // ws indicating a client object
                     }
 
                     // Valid card usage after prepeek
-                    channels.get(currentChannel).get("canSkip").set(ws, true) // Reset canskip bool for next turn
+                    if (channels.get(currentChannel).get("options")["skipping"]) {
+                        channels.get(currentChannel).get("canSkip").set(ws, true) // Reset canskip bool for next turn
+                    }
                     if (channels.get(currentChannel).get("cards").get(ws)[prepeeknum - 1].input) {
                         playCard(currentChannel, prepeeknum, data.applyto, data.input)
                     } else {
@@ -270,7 +284,7 @@ function initGame(channel) {
     console.log(`🕹️ Game being initialized in channel ${channel}`)
 
     // Set card pile amount
-    channels.get(channel).set("cardpile", 15)
+    channels.get(channel).set("cardpile", channels.get(channel).get("options")["cardAmount"])
 
     // Choose goal number
     if (Math.random() <= 0.5) {
@@ -286,7 +300,7 @@ function initGame(channel) {
     if (!clients) return;
 
     for (let client of clients) {
-        channels.get(channel).get("cards").set(client, handPull())
+        channels.get(channel).get("cards").set(client, handPull(channels.get(channel).get("options")["prepeek"]))
     }
     
     // Choose player numbers
@@ -315,9 +329,14 @@ function afterCountdown(channel) {
 
         // Send this info to clients
         for (let client of clients) {
-            channels.get(channel).get("canSkip").set(client, true) // Initiate canSkip var
+            if (channels.get(channel).get("options")["skipping"]) { // Initiate canSkip var
+                channels.get(channel).get("canSkip").set(client, true)
+            } else {
+                channels.get(channel).get("canSkip").set(client, false)
+            }
+
             if (client == firstGoer) {
-                client.send(JSON.stringify({ type: 'game', contents: 'yourTurn', canSkip: true}))
+                client.send(JSON.stringify({ type: 'game', contents: 'yourTurn', canSkip: channels.get(channel).get("canSkip").get(client)}))
             } else {
                 client.send(JSON.stringify({ type: 'game', contents: 'oppTurn'}))
             }
@@ -327,14 +346,14 @@ function afterCountdown(channel) {
     }
 }
 
-function cardPull() {
+function cardPull(prepeek) {
     // Pulls a random card from the card pool
     rarityVal = Math.random()
     prepeekVal = Math.random()
     if (rarityVal <= 0.38) {
         // BASIC CARD
         randomCard = cards_BASIC[Math.floor(Math.random() * cards_BASIC.length)]
-        if (prepeekVal <= 0.5) {
+        if (prepeekVal <= 0.5 && prepeek) {
             randomCard.prepeek = true
         } else {
             randomCard.prepeek = false
@@ -343,7 +362,7 @@ function cardPull() {
     } else if (rarityVal <= 0.65) {
         // COMMON CARD
         randomCard = cards_COMMON[Math.floor(Math.random() * cards_COMMON.length)]
-        if (prepeekVal <= 0.35) {
+        if (prepeekVal <= 0.35 && prepeek) {
             randomCard.prepeek = true
         } else {
             randomCard.prepeek = false
@@ -352,7 +371,7 @@ function cardPull() {
     } else if (rarityVal <= 0.83) {
         // UNCOMMON CARD
         randomCard = cards_UNCOMMON[Math.floor(Math.random() * cards_UNCOMMON.length)]
-        if (prepeekVal <= 0.2) {
+        if (prepeekVal <= 0.2 && prepeek) {
             randomCard.prepeek = true
         } else {
             randomCard.prepeek = false
@@ -361,7 +380,7 @@ function cardPull() {
     } else if (rarityVal <= 0.94) {
         // RARE CARD
         randomCard = cards_RARE[Math.floor(Math.random() * cards_RARE.length)]
-        if (prepeekVal <= 0.1) {
+        if (prepeekVal <= 0.1 && prepeek) {
             randomCard.prepeek = true
         } else {
             randomCard.prepeek = false
@@ -370,7 +389,7 @@ function cardPull() {
     } else if (rarityVal <= 0.99) {
         // EPIC CARD
         randomCard = cards_EPIC[Math.floor(Math.random() * cards_EPIC.length)]
-        if (prepeekVal <= 0.05) {
+        if (prepeekVal <= 0.05 && prepeek) {
             randomCard.prepeek = true
         } else {
             randomCard.prepeek = false
@@ -388,12 +407,12 @@ function cardPull() {
     }
 }
 
-function handPull() {
+function handPull(prepeek) {
     // Returns an array of five cards representing a player hand
     let output = []
 
     for(let i = 0; i < 5; i++){
-        output.push(cardPull())
+        output.push(cardPull(prepeek))
     }
 
     return output
@@ -625,7 +644,7 @@ function playCard(channel,cardNum,applyTo,input) {
 
     // Give player new random card (if possible) and subtract cardpile
     if (channels.get(channel).get("cardpile") > 0) {
-        channels.get(channel).get("cards").get(player)[cardNum - 1] = cardPull()
+        channels.get(channel).get("cards").get(player)[cardNum - 1] = cardPull(channels.get(channel).get("options")["prepeek"])
         channels.get(channel).set("cardpile", channels.get(channel).get("cardpile") - 1)
     }
 
@@ -820,5 +839,3 @@ function sumDivisors(n) {
 // WIP
 // wrong send request handling
 // spam handling
-// room creation page
-// better card information and tutorial
