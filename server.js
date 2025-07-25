@@ -7,7 +7,13 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const PORT = 3000;
 
-app.use(express.static('public'));
+app.use(express.static('public', {
+  maxAge: '1y', // or '31536000' (in ms)
+  setHeaders: (res) => {
+    res.set('Cache-Control', 'public, max-age=31536000');
+  }
+}));
+
 app.use(express.json());
 
 // Map of channelNumber => Set of client sockets
